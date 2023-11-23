@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.githubuser.data.response.ItemsItem
+import com.dicoding.githubuser.databinding.ItemFollowBinding
 
-ab
 
 class FollowAdapter() : ListAdapter<ItemsItem, FollowAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding = ItemFolowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
@@ -22,7 +22,7 @@ class FollowAdapter() : ListAdapter<ItemsItem, FollowAdapter.MyViewHolder>(DIFF_
         holder.bind(follow)
     }
 
-    class MyViewHolder(val binding: ItemFolowBinding) : RecyclerView.ViewHolder(binding.root){
+    class MyViewHolder(val binding: ItemFollowBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(follow	: ItemsItem){
 
 

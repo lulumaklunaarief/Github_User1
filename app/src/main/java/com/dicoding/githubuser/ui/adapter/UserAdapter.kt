@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.githubuser.data.response.ItemsItem
+import com.dicoding.githubuser.databinding.ItemUserBinding
 import com.dicoding.githubuser.ui.main.DetailUserActivity
 
 class UserAdapter: ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
@@ -22,7 +23,7 @@ class UserAdapter: ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBAC
         holder.bind(user)
     }
 
-    class MyViewHolder(val binding: ItemLayoutBinding) : RecyclerView.ViewHolder(binding.root){
+    class MyViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(user: ItemsItem){
 
             binding.root.setOnClickListener {

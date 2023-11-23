@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.githubuser.data.response.ItemsItem
 import com.dicoding.githubuser.databinding.ActivityMainBinding
-import com.dicoding.githubuser.ui.VM.UserViewModel
+import com.dicoding.githubuser.ui.viewmodel.UserViewModel
 import com.dicoding.githubuser.ui.adapter.UserAdapter
 
 class MainActivity : AppCompatActivity() {

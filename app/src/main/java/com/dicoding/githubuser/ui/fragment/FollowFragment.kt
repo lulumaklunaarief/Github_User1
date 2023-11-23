@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dicoding.githubuser.R
 import com.dicoding.githubuser.data.response.ItemsItem
 import com.dicoding.githubuser.databinding.FragmentFollowBinding
-import com.dicoding.githubuser.ui.VM.FollowViewModel
+import com.dicoding.githubuser.ui.viewmodel.FollowViewModel
 import com.dicoding.githubuser.ui.adapter.UserAdapter
 
 
