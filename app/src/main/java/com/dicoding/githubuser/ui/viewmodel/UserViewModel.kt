@@ -19,7 +19,7 @@ class UserViewModel: ViewModel() {
     val showLoading: LiveData<Boolean> = _showLoading
 
     companion object {
-        const val TAG = "MainViewModel"
+        const val TAG = "UserViewModel"
         private const val LOGIN_QUERY = " "
     }
 

@@ -5,15 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dicoding.githubuser.data.response.GithubDetailUserResponse
+import com.dicoding.githubuser.data.response.repository.FavoriteRepository
 import com.dicoding.githubuser.data.response.retrofit.ApiConfig
+import com.dicoding.githubuser.data.roomdatabase.Favorite
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailUserViewModel: ViewModel() {
+class DetailUserViewModel(private val favoriteRepository: FavoriteRepository) : ViewModel() {
 
     companion object {
-        private const val TAG = "DetailActivity"
+        private const val TAG = "DetailUserActivity"
     }
 
     private val _detailUser = MutableLiveData<GithubDetailUserResponse>()
@@ -47,4 +49,7 @@ class DetailUserViewModel: ViewModel() {
             }
         })
     }
+    fun getFavoriteUser (username: String) = favoriteRepository.isFavoriteUser(username)
+    fun insertFavorite (favorite: Favorite) = favoriteRepository.insert(favorite)
+    fun delateFavorite (favorite: Favorite) = favoriteRepository.delete(favorite)
 }

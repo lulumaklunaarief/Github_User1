@@ -10,7 +10,7 @@ import com.dicoding.githubuser.data.response.ItemsItem
 import com.dicoding.githubuser.databinding.ItemFollowBinding
 
 
-class FollowAdapter() : ListAdapter<ItemsItem, FollowAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class FollowAdapter : ListAdapter<ItemsItem, FollowAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
