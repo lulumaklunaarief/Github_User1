@@ -13,50 +13,39 @@ import com.dicoding.githubuser.databinding.ItemUserFavoriteBinding
 import com.dicoding.githubuser.ui.adapter.FollowAdapter.Companion.DIFF_CALLBACK
 import com.dicoding.githubuser.ui.main.DetailUserActivity
 
-class FavoriteAdapter : ListAdapter<Favorite, FavoriteAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class FavoriteAdapter(private val listUser: List<Favorite>) : RecyclerView.Adapter<FavoriteAdapter.MyViewHolder>() {
+    inner class MyViewHolder(private val binding: ItemUserFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(user: Favorite) {
+            with(binding) {
+                Glide.with(root.context)
+                    .load(user.avatarUrl).circleCrop().into(imgFavorite)
+                tvNameFavorite.text = "${user.username}"
+
+            }
+
+            itemView.setOnClickListener{}
+            val intent = Intent(itemView.context, DetailUserActivity::class.java)
+            intent.putExtra(DetailUserActivity.EXTRA_USERNAME, Favorite(username = user.username, avatarUrl = user.avatarUrl))
+            itemView.context.startActivity(intent)
+        }
+    }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): MyViewHolder {
+    ): FavoriteAdapter.MyViewHolder {
         val binding = ItemUserFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+    override fun onBindViewHolder(holder: FavoriteAdapter.MyViewHolder, position: Int) {
+        val user = listUser[position]
+        holder.bind(user)
     }
 
-    class MyViewHolder(val binding: ItemUserFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(user: Favorite) {
-
-            binding.root.setOnClickListener {
-                val intent = Intent(itemView.context, DetailUserActivity::class.java)
-                    .also {
-                    it.putExtra(DetailUserActivity.EXTRA_USERNAME, user.username)
-                }
-                itemView.context.startActivity(intent)
-            }
-            binding.tvNameFavorite.text = "${user.username}"
-            Glide.with(binding.imgFavorite.context)
-                .load(user.avatarUrl)
-                .into(binding.imgFavorite)
-        }
+    override fun getItemCount(): Int {
+        return listUser.size
     }
 
-    companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Favorite>() {
-            override fun areItemsTheSame(oldItem: Favorite, newItem: Favorite): Boolean {
-                return oldItem == newItem
-            }
-
-            @SuppressLint("DiffUtilEquals")
-            override fun areContentsTheSame(oldItem: Favorite, newItem: Favorite): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
 }
 
 

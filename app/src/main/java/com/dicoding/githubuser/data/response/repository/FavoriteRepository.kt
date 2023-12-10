@@ -1,32 +1,31 @@
 package com.dicoding.githubuser.data.response.repository
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import com.dicoding.githubuser.data.roomdatabase.Favorite
 import com.dicoding.githubuser.data.roomdatabase.FavoriteDao
-import com.dicoding.githubuser.ui.viewmodel.AppExecutors
+import com.dicoding.githubuser.data.roomdatabase.FavoriteRoomDatabase
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-class FavoriteRepository private constructor (
-    private val mFavoriteDao: FavoriteDao,
-    private val appExecutors: AppExecutors,
-) {
-    fun getAllFavorite(): LiveData<List<Favorite>> = mFavoriteDao.getAllFavorite()
-    fun isFavoriteUser(username: String) : LiveData<Favorite> {
-        return mFavoriteDao.isFavoriteUser(username)
-    }
-    fun insert(favorite: Favorite) {
-        appExecutors.diskIO.execute { mFavoriteDao.insert(favorite)}
-    }
-    fun delete(favorite: Favorite) {
-        appExecutors.diskIO.execute { mFavoriteDao.delete(favorite)}
+class FavoriteRepository(application: Application) {
+    private val mFavoriteDoa: FavoriteDao
+    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+
+    init {
+        val db = FavoriteRoomDatabase.getDatabase(application)
+        mFavoriteDoa = db.FavoriteDao()
     }
 
-    companion object {
-        @Volatile
-        private var instance:FavoriteRepository? = null
-        fun getInstance(favoriteDao: FavoriteDao, appExecutors: AppExecutors): FavoriteRepository =
-            instance ?: synchronized(this) {
-                instance ?: FavoriteRepository(favoriteDao, appExecutors)
-            }.also { instance = it }
+    fun getAllFavorite(): LiveData<List<Favorite>> = mFavoriteDoa.getAllFavorite()
+    fun isFavoriteUser(username: String): LiveData<String> = mFavoriteDoa.isFavoriteUser(username)
+
+    fun insert(user: Favorite) {
+        executorService.execute { mFavoriteDoa.insert(user)}
+    }
+
+    fun delete(user: Favorite) {
+        executorService.execute { mFavoriteDoa.delete(user) }
     }
 
 }

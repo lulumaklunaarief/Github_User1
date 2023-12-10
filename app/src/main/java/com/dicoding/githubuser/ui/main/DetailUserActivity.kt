@@ -2,10 +2,11 @@ package com.dicoding.githubuser.ui.main
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.dicoding.githubuser.R
@@ -13,6 +14,7 @@ import com.dicoding.githubuser.data.roomdatabase.Favorite
 import com.dicoding.githubuser.databinding.ActivityDetailUserBinding
 import com.dicoding.githubuser.ui.adapter.SectionPagerAdapter
 import com.dicoding.githubuser.ui.viewmodel.DetailUserViewModel
+import com.dicoding.githubuser.ui.viewmodel.FavoriteUserViewModel
 import com.dicoding.githubuser.ui.viewmodel.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,9 +22,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 class DetailUserActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailUserBinding
-    private val detailUserViewModel by viewModels<DetailUserViewModel>{
-        ViewModelFactory.getInstance(this)
-    }
+    private val detailUserViewModel by viewModels<DetailUserViewModel>()
+    private lateinit var favoriteUserViewModel: FavoriteUserViewModel
+    private var isUserFavorited = false
 
     companion object {
         const val EXTRA_USERNAME = "extra_username"
@@ -37,8 +39,62 @@ class DetailUserActivity : AppCompatActivity() {
         binding = ActivityDetailUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.elevation= 0f
-        val username = intent.getStringExtra(EXTRA_USERNAME)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportActionBar?.elevation = 0f
+
+        favoriteUserViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(application)
+        )[FavoriteUserViewModel::class.java]
+        val currentUser = intent.getParcelableExtra<Favorite>(EXTRA_USERNAME)
+        val username = currentUser?.username
+        if (username != null) {
+            detailUserViewModel.getFavoriteUser(username)
+        }
+
+
+
+        detailUserViewModel.showLoading.observe(this) {
+            showLoading(it)
+        }
+
+        if (currentUser != null) {
+            favoriteUserViewModel.isFavoriteUser(currentUser.username).observe(this) {
+                isUserFavorited = currentUser.username == it
+                binding.apply {
+                    btnFavorites.setOnClickListener {
+                        if (isUserFavorited) {
+                            favoriteUserViewModel.delete(currentUser)
+                            Toast.makeText(
+                                this@DetailUserActivity,
+                                "$username telah dihapus dari Favorit",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            favoriteUserViewModel.insert(currentUser)
+                            Toast.makeText(
+                                this@DetailUserActivity,
+                                "$username telah ditambah dari Favorit",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    }
+                    if (isUserFavorited) {
+                        btnFavorites.setImageResource(R.drawable.baseline_favorite_24)
+
+                    } else {
+                        btnFavorites.setImageResource(R.drawable.baseline_favorite_border_24)
+                    }
+
+                }
+            }
+        }
+
+
+
+    val user = intent.getStringExtra(EXTRA_USERNAME)
 
         val sectionPagerAdapter = SectionPagerAdapter(this, username ?: " ")
         binding.viewPager.adapter = sectionPagerAdapter
@@ -69,34 +125,19 @@ class DetailUserActivity : AppCompatActivity() {
                     binding.tvFollowing.text = "${it.following.toString()} Following"
                     Glide.with(this@DetailUserActivity).load(it.avatarUrl).into(binding.userPhoto)
                 }
-                detailUserViewModel.getFavoriteUser(it.login.toString()).observe(this@DetailUserActivity) { favoriteUser->
-                    if (favoriteUser == null) {
-                        setIconFavorite(false)
-                        binding.favorites.setOnClickListener{
-                            val favorite = Favorite(favoriteUser?.username.toString(), favoriteUser?.avatarUrl)
-                            detailUserViewModel.insertFavorite(favorite)
-                        }
 
-                    }else{
-                        setIconFavorite(true)
-                        binding.favorites.setOnClickListener {
-                            detailUserViewModel.delateFavorite(favoriteUser)
-                        }
-                    }
-                }
             }
         }
 
-        detailUserViewModel.setUserDetail(username ?: "username")
+        detailUserViewModel.setUserDetail(user ?: "username")
     }
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
-    private fun setIconFavorite(isIconFavorite: Boolean){
-        if (isIconFavorite){
-            binding.favorites.setImageDrawable(ContextCompat.getDrawable(this@DetailUserActivity,R.drawable.baseline_favorite_24))
-        }else {
-            binding.favorites.setImageDrawable(ContextCompat.getDrawable(this@DetailUserActivity,R.drawable.baseline_favorite_border_24))
-        }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return super.onSupportNavigateUp()
     }
+
 }

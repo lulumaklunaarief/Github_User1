@@ -10,14 +10,12 @@ import androidx.room.Query
 @Dao
 interface FavoriteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(favorite: Favorite)
-
+    fun insert(user: Favorite)
     @Delete
-    fun delete(favorite: Favorite)
+    fun delete(user: Favorite)
+    @Query("SELECT username FROM Favorite WHERE username= :username")
+    fun isFavoriteUser(username: String): LiveData<String>
 
-    @Query("SELECT * from Favorite ORDER BY username ASC")
+    @Query("SELECT * FROM Favorite ORDER BY username ASC" )
     fun getAllFavorite(): LiveData<List<Favorite>>
-
-    @Query("SELECT * from Favorite WHERE username = :username")
-    fun isFavoriteUser(username:String): LiveData<Favorite>
 }

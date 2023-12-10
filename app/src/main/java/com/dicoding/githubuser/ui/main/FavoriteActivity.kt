@@ -1,35 +1,43 @@
 package com.dicoding.githubuser.ui.main
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.ViewModelProvider
 import com.dicoding.githubuser.databinding.ActivityFavoriteBinding
 import com.dicoding.githubuser.ui.adapter.FavoriteAdapter
 import com.dicoding.githubuser.ui.viewmodel.FavoriteUserViewModel
 import com.dicoding.githubuser.ui.viewmodel.ViewModelFactory
 
 class FavoriteActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityFavoriteBinding
-    private val favoriteUserViewModel by viewModels<FavoriteUserViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var favoriteUserViewModel: FavoriteUserViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+        }
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.rvFavorite.layoutManager = layoutManager
-        val item = DividerItemDecoration(this, layoutManager.orientation)
-        binding.rvFavorite.addItemDecoration(item)
+        favoriteUserViewModel = ViewModelProvider(this, ViewModelFactory(application))[FavoriteUserViewModel::class.java]
 
-        val adapter = FavoriteAdapter()
-        binding.rvFavorite.adapter = adapter
-        favoriteUserViewModel.getAllFavorite().observe(this){
-            adapter.submitList(it)
+
+        favoriteUserViewModel.getAllFavorite().observe(this) {
+            binding.apply {
+                rvFavorite.adapter = FavoriteAdapter(it)
+            }
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
+    }
+
+
+
+
 }
+
+

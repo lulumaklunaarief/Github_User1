@@ -25,10 +25,10 @@ class DetailUserViewModel(private val favoriteRepository: FavoriteRepository) : 
     val showLoading: LiveData<Boolean> = _showLoading
 
 
-    fun setUserDetail(username: String) {
+    fun setUserDetail(user: String) {
         _showLoading.value = true
 
-        val client = ApiConfig.getApiService().getDetailUser(username)
+        val client = ApiConfig.getApiService().getDetailUser(user)
         client.enqueue(object : Callback<GithubDetailUserResponse> {
             override fun onResponse(
                 call: Call<GithubDetailUserResponse>,

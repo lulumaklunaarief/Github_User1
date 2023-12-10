@@ -1,29 +1,25 @@
 package com.dicoding.githubuser.ui.viewmodel
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.githubuser.data.response.injection.Injection
-import com.dicoding.githubuser.data.response.repository.FavoriteRepository
 
-class ViewModelFactory private constructor(private val favoriteRepository: FavoriteRepository) :
-ViewModelProvider.NewInstanceFactory(){
+class ViewModelFactory (private val application: Application) :
+ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FavoriteUserViewModel::class.java)) {
-            return FavoriteUserViewModel(favoriteRepository) as T
-        } else if (modelClass.isAssignableFrom(DetailUserViewModel::class.java)) {
-            return DetailUserViewModel(favoriteRepository) as T
+            return FavoriteUserViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
-
-    companion object {
-        @Volatile
-        private var instance: ViewModelFactory? = null
-        fun getInstance(context: Context): ViewModelFactory = instance ?: synchronized(this) {
-            instance ?: ViewModelFactory(Injection.provideRepository(context))
-        }.also { instance  = it }
-
-    }
 }
+//    companion object {
+//        @Volatile
+//        private var instance: ViewModelFactory? = null
+//        fun getInstance(context: Context): ViewModelFactory = instance ?: synchronized(this) {
+//            instance ?: ViewModelFactory(Injection.provideRepository(context))
+//        }.also { instance  = it }
+//
+//    }
+

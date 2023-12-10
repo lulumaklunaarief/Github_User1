@@ -109,7 +109,7 @@
     </androidx.viewpager2.widget.ViewPager2>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/favorites"
+        android:id="@+id/btn_favorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchorGravity="bottom|end"
